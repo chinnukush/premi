@@ -17,7 +17,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
                 [InlineKeyboardButton('ʜᴏᴍᴇ', callback_data='start'),
                  InlineKeyboardButton("ᴄʟᴏꜱᴇ", callback_data='close')],
                 [InlineKeyboardButton('ᴘʀᴇᴍɪᴜᴍ', callback_data='premium')
-            ])
+            ]])
         )
 
     elif data == "about":
