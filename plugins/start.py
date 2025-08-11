@@ -190,14 +190,9 @@ async def start_command(client: Client, message: Message):
     else:
         reply_markup = InlineKeyboardMarkup(
             [
-                    [InlineKeyboardButton("• ᴍᴏʀᴇ ᴄʜᴀɴɴᴇʟs •", url="https://t.me/TG_BOTS_UPDATE/91")],
-
-    [
-                    InlineKeyboardButton("• ᴀʙᴏᴜᴛ", callback_data = "about"),
-                    InlineKeyboardButton('ʜᴇʟᴘ •', callback_data = "help")
+                    [InlineKeyboardButton("• ᴘʀᴇᴍɪᴜᴍ •", callback_data = "premium")],
 
     ]
-            ]
         )
         await message.reply_photo(
             photo=START_PIC,
