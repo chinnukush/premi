@@ -46,7 +46,7 @@ async def cb_handler(client: Bot, query: CallbackQuery):
             caption=(
                 f"👋 {query.from_user.username}\n\n"
                 f"🎖️ Available Plans :\n\n"
-                f"● {PRICE1}  For 0 Days Prime Membership\n\n"
+                f"● {PRICE1}  For 07 Days Prime Membership\n\n"
                 f"● {PRICE2}  For 1 Month Prime Membership\n\n"
                 f"● {PRICE3}  For 3 Months Prime Membership\n\n"
                 f"● {PRICE4}  For 6 Months Prime Membership\n\n"
