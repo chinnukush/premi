@@ -68,7 +68,7 @@ CMD_TXT = """<blockquote><b>» ᴀᴅᴍɪɴ ᴄᴏᴍᴍᴀɴᴅs:</b></blockqu
 <b>›› /delreq :</b> Rᴇᴍᴏᴠᴇᴅ ʟᴇғᴛᴏᴠᴇʀ ɴᴏɴ-ʀᴇǫᴜᴇsᴛ ᴜsᴇʀs
 """
 #--------------------------------------------
-CUSTOM_CAPTION = os.environ.get("CUSTOM_CAPTION", "None") #set your Custom Caption here, Keep None for Disable Custom Caption
+CUSTOM_CAPTION = os.environ.get("CUSTOM_CAPTION", "<blockquote><b>⚠️ ꜱᴀᴠᴇ ᴛʜᴇ ғɪʟᴇꜱ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ ᴀɴᴅ ᴡᴀᴛᴄʜ... ғɪʟᴇꜱ ᴡɪʟʟ ᴅᴇʟᴇᴛᴇ ꜱᴏᴏɴ ᴛᴏ ᴀᴠᴏɪᴅ ᴄᴏᴘʏʀɪɢʜᴛ ɪɴғɪɢʀᴀᴛɪᴏɴ.</blockquote></b>") #set your Custom Caption here, Keep None for Disable Custom Caption
 PROTECT_CONTENT = True if os.environ.get('PROTECT_CONTENT', "False") == "True" else False #set True if you want to prevent users from forwarding files from bot
 #--------------------------------------------
 #Set true if you want Disable your Channel Posts Share button
