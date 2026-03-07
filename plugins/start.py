@@ -78,7 +78,7 @@ async def start_command(client: Client, message: Message):
 
     FILE_AUTO_DELETE = await db.get_del_timer()
 
-    text = message.text
+text = message.text
 
 if len(text) > 7:
     try:
@@ -100,7 +100,7 @@ if len(text) > 7:
         print(f"Error processing start payload: {e}")
         return
 
-    # ✅ decode must be inside this block
+    # decode
     string = await decode(base64_string)
     argument = string.split("-")
 
@@ -120,27 +120,27 @@ if len(text) > 7:
             print(f"Error decoding IDs: {e}")
             return
 
-elif len(argument) == 2:
+    elif len(argument) == 2:
+        try:
+            ids = [int(int(argument[1]) / abs(client.db_channel.id))]
+        except Exception as e:
+            print(f"Error decoding ID: {e}")
+            return
+
+    # Get messages
     try:
-        ids = [int(int(argument[1]) / abs(client.db_channel.id))]
+        messages = await client.get_messages(client.db_channel.id, ids)
+
     except Exception as e:
-        print(f"Error decoding ID: {e}")
+        print(f"Error getting messages: {e}")
+        await message.reply_text("Something went wrong!")
         return
 
-# ✅ ADD THIS PART
-try:
-    messages = await client.get_messages(client.db_channel.id, ids)
-except Exception as e:
-    print(f"Error getting messages: {e}")
-    await message.reply_text("Something went wrong!")
-    return
-
-            
-            await message.reply_text("Something went wrong!")
-            print(f"Error getting messages: {e}")
-            return
-        finally:
+    finally:
+        try:
             await temp_msg.delete()
+        except:
+            pass
 
         codeflix_msgs = []
         for msg in messages:
