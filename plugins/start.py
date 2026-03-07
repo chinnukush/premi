@@ -85,47 +85,54 @@ async def start_command(client: Client, message: Message):
     text = message.text
 
     if len(text) > 7:
-        try:
-            basic = text.split(" ", 1)[1]
-            if basic.startswith("yu3elk"):
-                base64_string = basic[6:-1]
-            else:
-                base64_string = basic
+    try:
+        basic = text.split(" ", 1)[1]
 
-            # Shortlink Bypass System
+        if basic.startswith("yu3elk"):
+            base64_string = basic[6:-1]
+        else:
+            base64_string = basic
 
-admins = admin  # from helper_func
+        # ---------------- SHORTLINK BYPASS SYSTEM ---------------- #
 
-if user_id in admins or user_id == OWNER_ID or is_premium:
-    # Direct download (bypass shortlink)
-    pass
-else:
-    if not basic.startswith("yu3elk"):
-        await short_url(client, message, base64_string)
+        admins = admin  # from helper_func
+
+        if user_id not in admins and user_id != OWNER_ID and not is_premium:
+            if not basic.startswith("yu3elk"):
+                await short_url(client, message, base64_string)
+                return
+
+        # ---------------------------------------------------------- #
+
+    except Exception as e:
+        print(f"Error processing start payload: {e}")
         return
 
+    string = await decode(base64_string)
+    argument = string.split("-")
+
+    ids = []
+
+    if len(argument) == 3:
+        try:
+            start = int(int(argument[1]) / abs(client.db_channel.id))
+            end = int(int(argument[2]) / abs(client.db_channel.id))
+
+            if start <= end:
+                ids = range(start, end + 1)
+            else:
+                ids = list(range(start, end - 1, -1))
+
         except Exception as e:
-            print(f"Error processing start payload: {e}")
+            print(f"Error decoding IDs: {e}")
+            return
 
-        string = await decode(base64_string)
-        argument = string.split("-")
-
-        ids = []
-        if len(argument) == 3:
-            try:
-                start = int(int(argument[1]) / abs(client.db_channel.id))
-                end = int(int(argument[2]) / abs(client.db_channel.id))
-                ids = range(start, end + 1) if start <= end else list(range(start, end - 1, -1))
-            except Exception as e:
-                print(f"Error decoding IDs: {e}")
-                return
-
-        elif len(argument) == 2:
-            try:
-                ids = [int(int(argument[1]) / abs(client.db_channel.id))]
-            except Exception as e:
-                print(f"Error decoding ID: {e}")
-                return
+    elif len(argument) == 2:
+        try:
+            ids = [int(int(argument[1]) / abs(client.db_channel.id))]
+        except Exception as e:
+            print(f"Error decoding ID: {e}")
+            return
 
         temp_msg = await message.reply("<b>Please wait...</b>")
         try:
