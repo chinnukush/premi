@@ -27,7 +27,10 @@ TUT_VID = f"{TUT_VID}"
 async def short_url(client: Client, message: Message, base64_string):
     try:
         prem_link = f"https://t.me/{client.username}?start=yu3elk{base64_string}7"
+        print(f"[DEBUG] Prem link: {prem_link}")
+
         short_link = await get_shortlink(SHORTLINK_URL, SHORTLINK_API, prem_link)
+        print(f"[DEBUG] Short link: {short_link}")
 
         buttons = [
             [
@@ -41,13 +44,14 @@ async def short_url(client: Client, message: Message, base64_string):
 
         await message.reply_photo(
             photo=SHORTENER_PIC,
-            caption=SHORT_MSG.format(
-            ),
+            caption=SHORT_MSG,
             reply_markup=InlineKeyboardMarkup(buttons),
         )
 
-    except IndexError:
-        pass
+    except Exception as e:
+        print(f"[ERROR] short_url failed: {e}")
+        await message.reply_text("⚠️ Could not generate shortlink. Please try again later.")
+
 
 
 @Bot.on_message(filters.command('start') & filters.private)
