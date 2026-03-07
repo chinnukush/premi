@@ -59,17 +59,18 @@ async def start_command(client: Client, message: Message):
     if not await db.present_user(user_id):
         try:
             await db.add_user(user_id)
-        except:
-            pass
+        except Exception as e:
+            print(f"Error adding user: {e}")
 
-    # Force sub check
+    # Force subscription check
     if not await is_subscribed(client, user_id):
         return await not_joined(client, message)
 
+    # Ban check
     banned_users = await db.get_ban_users()
     if user_id in banned_users:
         return await message.reply_text(
-            "<b>⛔️ You are Bᴀɴɴᴇᴅ from using this bot.</b>\n\n"
+            "<b>⛔️ You are banned from using this bot.</b>\n\n"
             "<i>Contact support if you think this is a mistake.</i>",
             reply_markup=InlineKeyboardMarkup(
                 [[InlineKeyboardButton("Contact Support", url=BAN_SUPPORT)]]
@@ -77,71 +78,48 @@ async def start_command(client: Client, message: Message):
         )
 
     FILE_AUTO_DELETE = await db.get_del_timer()
-
-    # 👇 Everything below must stay inside the function
     text = message.text
 
+    # If payload exists
     if len(text) > 7:
+        temp_msg = await message.reply("Processing your request...")
+
         try:
             basic = text.split(" ", 1)[1]
+            print(f"Payload received: {basic}")
 
             if basic.startswith("yu3elk"):
                 base64_string = basic[6:-1]
             else:
                 base64_string = basic
 
+            # Non-premium users get redirected to shortlink
             admins = admin
-
             if user_id not in admins and user_id != OWNER_ID and not is_premium:
                 if not basic.startswith("yu3elk"):
                     await short_url(client, message, base64_string)
                     return
 
-        except Exception as e:
-            print(f"Error processing start payload: {e}")
-            return
+            # Decode payload
+            string = await decode(base64_string)
+            argument = string.split("-")
+            ids = []
 
-        # decode
-        string = await decode(base64_string)
-        argument = string.split("-")
-
-        ids = []
-
-        if len(argument) == 3:
-            try:
+            if len(argument) == 3:
                 start = int(int(argument[1]) / abs(client.db_channel.id))
                 end = int(int(argument[2]) / abs(client.db_channel.id))
-
-                if start <= end:
-                    ids = range(start, end + 1)
-                else:
-                    ids = list(range(start, end - 1, -1))
-
-            except Exception as e:
-                print(f"Error decoding IDs: {e}")
-                return
-
-        elif len(argument) == 2:
-            try:
+                ids = range(start, end + 1) if start <= end else range(start, end - 1, -1)
+            elif len(argument) == 2:
                 ids = [int(int(argument[1]) / abs(client.db_channel.id))]
-            except Exception as e:
-                print(f"Error decoding ID: {e}")
+
+            if not ids:
+                await temp_msg.edit("Invalid or expired link.")
                 return
 
-        # Get messages
-        try:
+            # Fetch messages
             messages = await client.get_messages(client.db_channel.id, ids)
-        except Exception as e:
-            print(f"Error getting messages: {e}")
-            await message.reply_text("Something went wrong!")
-            return
-        finally:
-            try:
-                await temp_msg.delete()
-            except:
-                pass
 
-            # Copy messages to user
+            # Copy to user
             codeflix_msgs = []
             for msg in messages:
                 original_caption = msg.caption.html if msg.caption else ""
@@ -168,21 +146,23 @@ async def start_command(client: Client, message: Message):
                         protect_content=PROTECT_CONTENT
                     )
                     codeflix_msgs.append(copied_msg)
-                except:
-                    pass
+                except Exception as e:
+                    print(f"Error copying message: {e}")
+
+            await temp_msg.delete()
 
             # Auto delete logic
             if FILE_AUTO_DELETE > 0:
                 notification_msg = await message.reply(
-                    f"<b>Tʜɪs Fɪʟᴇ ᴡɪʟʟ ʙᴇ Dᴇʟᴇᴛᴇᴅ ɪɴ {get_exp_time(FILE_AUTO_DELETE)}...</b>"
+                    f"<b>This file will be deleted in {get_exp_time(FILE_AUTO_DELETE)}. Save or forward it before deletion.</b>"
                 )
 
                 await asyncio.sleep(FILE_AUTO_DELETE)
 
-                for snt_msg in codeflix_msgs:    
+                for snt_msg in codeflix_msgs:
                     if snt_msg:
-                        try:    
-                            await snt_msg.delete()  
+                        try:
+                            await snt_msg.delete()
                         except Exception as e:
                             print(f"Error deleting message {snt_msg.id}: {e}")
 
@@ -193,17 +173,22 @@ async def start_command(client: Client, message: Message):
                         else None
                     )
                     keyboard = InlineKeyboardMarkup(
-                        [[InlineKeyboardButton("ɢᴇᴛ ғɪʟᴇ ᴀɢᴀɪɴ!", url=reload_url)]]
+                        [[InlineKeyboardButton("Get File Again!", url=reload_url)]]
                     ) if reload_url else None
 
                     await notification_msg.edit(
-                        "<b>ʏᴏᴜʀ ꜰɪʟᴇ ᴡᴀs ᴅᴇʟᴇᴛᴇᴅ. Cʟɪᴄᴋ ʙᴇʟᴏᴡ ᴛᴏ ʀᴇ-ɢᴇᴛ ɪᴛ 👇</b>",
+                        "<b>Your file was deleted. Click below to re-get it 👇</b>",
                         reply_markup=keyboard
                     )
                 except Exception as e:
                     print(f"Error updating notification: {e}")
 
+        except Exception as e:
+            print(f"Error processing start payload: {e}")
+            await temp_msg.edit("Something went wrong while processing your request.")
+
     else:
+        # No payload, show welcome/start message
         reply_markup = InlineKeyboardMarkup(
             [[InlineKeyboardButton("Contact Support", url=BAN_SUPPORT)]]
         )
@@ -218,7 +203,7 @@ async def start_command(client: Client, message: Message):
             ),
             reply_markup=reply_markup
         )
-        return
+
 
 
 
