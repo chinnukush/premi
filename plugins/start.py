@@ -80,29 +80,27 @@ async def start_command(client: Client, message: Message):
 
     text = message.text
 
-    if len(text) > 7:
-        try:
-            basic = text.split(" ", 1)[1]
+if len(text) > 7:
+    try:
+        basic = text.split(" ", 1)[1]
 
-            if basic.startswith("yu3elk"):
-                base64_string = basic[6:-1]
-            else:
-                base64_string = basic
+        if basic.startswith("yu3elk"):
+            base64_string = basic[6:-1]
+        else:
+            base64_string = basic
 
-            # SHORTLINK SYSTEM
-            admins = admin
+        admins = admin
 
-            if user_id not in admins and user_id != OWNER_ID and not is_premium:
-                if not basic.startswith("yu3elk"):
-                    await short_url(client, message, base64_string)
-                    return
+        if user_id not in admins and user_id != OWNER_ID and not is_premium:
+            if not basic.startswith("yu3elk"):
+                await short_url(client, message, base64_string)
+                return
 
-        except Exception as e:
-            print(f"Error processing start payload: {e}")
-            return
+    except Exception as e:
+        print(f"Error processing start payload: {e}")
+        return
 
-        # ---------------------------------------------------------- #
-
+    # ✅ decode must be inside this block
     string = await decode(base64_string)
     argument = string.split("-")
 
