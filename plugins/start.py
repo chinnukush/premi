@@ -92,9 +92,17 @@ async def start_command(client: Client, message: Message):
             else:
                 base64_string = basic
 
-            if not is_premium and user_id != OWNER_ID and not basic.startswith("yu3elk"):
-                await short_url(client, message, base64_string)
-                return
+            # Shortlink Bypass System
+
+admins = admin  # from helper_func
+
+if user_id in admins or user_id == OWNER_ID or is_premium:
+    # Direct download (bypass shortlink)
+    pass
+else:
+    if not basic.startswith("yu3elk"):
+        await short_url(client, message, base64_string)
+        return
 
         except Exception as e:
             print(f"Error processing start payload: {e}")
