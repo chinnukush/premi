@@ -53,8 +53,7 @@ async def short_url(client: Client, message: Message, base64_string):
 @Bot.on_message(filters.command('start') & filters.private)
 async def start_command(client: Client, message: Message):
     user_id = message.from_user.id
-    id = message.from_user.id
-    is_premium = await is_premium_user(id)
+    is_premium = await is_premium_user(user_id)
 
     # Add user if not already present
     if not await db.present_user(user_id):
@@ -63,11 +62,10 @@ async def start_command(client: Client, message: Message):
         except:
             pass
 
-    # ✅ Check Force Subscription
+    # Force sub check
     if not await is_subscribed(client, user_id):
         return await not_joined(client, message)
 
-    # Check if user is banned
     banned_users = await db.get_ban_users()
     if user_id in banned_users:
         return await message.reply_text(
@@ -78,35 +76,32 @@ async def start_command(client: Client, message: Message):
             )
         )
 
-    # File auto-delete time in seconds
     FILE_AUTO_DELETE = await db.get_del_timer()
 
-    # Handle normal message flow
     text = message.text
 
-if len(text) > 7:
-    try:
-        basic = text.split(" ", 1)[1]
+    if len(text) > 7:
+        try:
+            basic = text.split(" ", 1)[1]
 
-        if basic.startswith("yu3elk"):
-            base64_string = basic[6:-1]
-        else:
-            base64_string = basic
+            if basic.startswith("yu3elk"):
+                base64_string = basic[6:-1]
+            else:
+                base64_string = basic
 
-        # ---------------- SHORTLINK BYPASS SYSTEM ---------------- #
+            # SHORTLINK SYSTEM
+            admins = admin
 
-        admins = admin  # from helper_func
+            if user_id not in admins and user_id != OWNER_ID and not is_premium:
+                if not basic.startswith("yu3elk"):
+                    await short_url(client, message, base64_string)
+                    return
 
-        if user_id not in admins and user_id != OWNER_ID and not is_premium:
-            if not basic.startswith("yu3elk"):
-                await short_url(client, message, base64_string)
-                return
+        except Exception as e:
+            print(f"Error processing start payload: {e}")
+            return
 
         # ---------------------------------------------------------- #
-
-    except Exception as e:
-        print(f"Error processing start payload: {e}")
-        return
 
     string = await decode(base64_string)
     argument = string.split("-")
