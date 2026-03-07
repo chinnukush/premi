@@ -120,12 +120,20 @@ if len(text) > 7:
             print(f"Error decoding IDs: {e}")
             return
 
-    elif len(argument) == 2:
-        try:
-            ids = [int(int(argument[1]) / abs(client.db_channel.id))]
-        except Exception as e:
-            print(f"Error decoding ID: {e}")
-            return
+elif len(argument) == 2:
+    try:
+        ids = [int(int(argument[1]) / abs(client.db_channel.id))]
+    except Exception as e:
+        print(f"Error decoding ID: {e}")
+        return
+
+# ✅ ADD THIS PART
+try:
+    messages = await client.get_messages(client.db_channel.id, ids)
+except Exception as e:
+    print(f"Error getting messages: {e}")
+    await message.reply_text("Something went wrong!")
+    return
 
             
             await message.reply_text("Something went wrong!")
@@ -135,7 +143,6 @@ if len(text) > 7:
             await temp_msg.delete()
 
         codeflix_msgs = []
-
         for msg in messages:
             original_caption = msg.caption.html if msg.caption else ""
             caption = f"{original_caption}\n\n{CUSTOM_CAPTION}" if CUSTOM_CAPTION else original_caption
