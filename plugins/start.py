@@ -84,7 +84,7 @@ async def start_command(client: Client, message: Message):
     # Handle normal message flow
     text = message.text
 
-    if len(text) > 7:
+if len(text) > 7:
     try:
         basic = text.split(" ", 1)[1]
 
@@ -134,10 +134,7 @@ async def start_command(client: Client, message: Message):
             print(f"Error decoding ID: {e}")
             return
 
-        temp_msg = await message.reply("<b>Please wait...</b>")
-        try:
-            messages = await get_messages(client, ids)
-        except Exception as e:
+            
             await message.reply_text("Something went wrong!")
             print(f"Error getting messages: {e}")
             return
