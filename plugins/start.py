@@ -38,14 +38,13 @@ async def short_url(client: Client, message: Message, base64_string):
         ]
 
         await message.reply_photo(
-            caption=SHORT_MSG.format(
-            ),
-            reply_markup=InlineKeyboardMarkup(buttons),
-                disable_web_page_preview=True
+            photo=SHORTENER_PIC,
+            caption=SHORT_MSG,
+            reply_markup=InlineKeyboardMarkup(buttons)
         )
 
     except Exception as e:
-        print(f"Shortlink Error: {e}")
+        print("Shortlink Error:", e)
 
 
 @Bot.on_message(filters.command('start') & filters.private)
