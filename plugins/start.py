@@ -46,7 +46,7 @@ async def short_url(client: Client, message: Message, base64_string):
         )
 
     except Exception as e:
-    print(f"Shortlink Error: {e}")
+        print(f"Shortlink Error: {e}")
 
 
 @Bot.on_message(filters.command('start') & filters.private)
