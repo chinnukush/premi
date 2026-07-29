@@ -37,7 +37,7 @@ async def short_url(client: Client, message: Message, base64_string):
 
         encoded = quote(short_link, safe="")
 
-        website_link = f"https://harixmoviez.vercel.app/?redirect={encoded}"
+        website_link = f"https://hm-hub.vercel.app/?redirect={encoded}"
 
         buttons = [
             [
