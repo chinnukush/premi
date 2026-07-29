@@ -25,38 +25,47 @@ BAN_SUPPORT = f"{BAN_SUPPORT}"
 TUT_VID = f"{TUT_VID}"
 
 
-async def short_url(client, message, base64_string):
-    telegram_link = f"https://t.me/{client.username}?start=yu3elk{base64_string}7"
+async def short_url(client: Client, message: Message, base64_string):
+    try:
+        telegram_link = f"https://t.me/{client.username}?start=yu3elk{base64_string}7"
 
-    short_link = await get_shortlink(
-        SHORTLINK_URL,
-        SHORTLINK_API,
-        telegram_link
-    )
+        short_link = await get_shortlink(
+            SHORTLINK_URL,
+            SHORTLINK_API,
+            telegram_link
+        )
 
-    website_link = (
-        "https://hm-hub.vercel.app/?redirect="
-        + quote(short_link, safe="")
-    )
+        encoded = quote(short_link, safe="")
 
-    buttons = [
-        [
-            InlineKeyboardButton("📥 Download", url=website_link),
-            InlineKeyboardButton("🎥 Tutorial", url=TUT_VID)
-        ],
-        [
-            InlineKeyboardButton("⭐ Premium", callback_data="premium")
+        website_link = f"https://harixmoviez.vercel.app/?redirect={encoded}"
+
+        buttons = [
+            [
+                InlineKeyboardButton(
+                    "ᴅᴏᴡɴʟᴏᴀᴅ",
+                    url=website_link
+                ),
+                InlineKeyboardButton(
+                    "ᴛᴜᴛᴏʀɪᴀʟ",
+                    url=TUT_VID
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    "ᴘʀᴇᴍɪᴜᴍ",
+                    callback_data="premium"
+                )
+            ]
         ]
-    ]
 
-    await message.reply_photo(
-        photo=SHORTENER_PIC,
-        caption=SHORT_MSG,
-        reply_markup=InlineKeyboardMarkup(buttons)
-    )
+        await message.reply_photo(
+            photo=SHORTENER_PIC,
+            caption=SHORT_MSG,
+            reply_markup=InlineKeyboardMarkup(buttons)
+        )
 
     except Exception as e:
-        print("Shortlink Error:", e)
+        print(f"Shortlink Error: {e}")
 
 
 @Bot.on_message(filters.command('start') & filters.private)
