@@ -24,16 +24,38 @@ TUT_VID = f"{TUT_VID}"
 
 async def short_url(client: Client, message: Message, base64_string):
     try:
-        prem_link = f"https://t.me/{client.username}?start=yu3elk{base64_string}7"
-        short_link = await get_shortlink(SHORTLINK_URL, SHORTLINK_API, prem_link)
+        # Telegram link after shortlink
+        telegram_link = f"https://t.me/{client.username}?start=yu3elk{base64_string}7"
+
+        # Generate shortlink
+        short_link = await get_shortlink(
+            SHORTLINK_URL,
+            SHORTLINK_API,
+            telegram_link
+        )
+
+        # Encode shortlink for website
+        encoded = quote(short_link, safe="")
+
+        # Website URL
+        website_link = f"https://hm-hub.vercel.app/?redirect={encoded}"
 
         buttons = [
             [
-                InlineKeyboardButton(text="ᴅᴏᴡɴʟᴏᴀᴅ", url=short_link),
-                InlineKeyboardButton(text="ᴛᴜᴛᴏʀɪᴀʟ", url=TUT_VID)
+                InlineKeyboardButton(
+                    text="ᴅᴏᴡɴʟᴏᴀᴅ",
+                    url=website_link
+                ),
+                InlineKeyboardButton(
+                    text="ᴛᴜᴛᴏʀɪᴀʟ",
+                    url=TUT_VID
+                )
             ],
             [
-                InlineKeyboardButton(text="ᴘʀᴇᴍɪᴜᴍ", callback_data="premium")
+                InlineKeyboardButton(
+                    text="ᴘʀᴇᴍɪᴜᴍ",
+                    callback_data="premium"
+                )
             ]
         ]
 
