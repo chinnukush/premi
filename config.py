@@ -28,7 +28,7 @@ BAN_SUPPORT = os.environ.get("BAN_SUPPORT", "https://t.me/Harikushal")
 TG_BOT_WORKERS = int(os.environ.get("TG_BOT_WORKERS", "200"))
 #--------------------------------------------
 START_PIC = os.environ.get("START_PIC", "https://iili.io/nXAwZ11.jpg")
-FORCE_PIC = os.environ.get("FORCE_PIC", "https://iili.io/nXAewzv.jpg")
+FORCE_PIC = os.environ.get("FORCE_PIC", "https://iili.io/nXA8TgI.jpg")
 
 #--------------------------------------------
 SHORTLINK_URL = os.environ.get("SHORTLINK_URL", "linkshortify.com")
