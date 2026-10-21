@@ -7,6 +7,7 @@ import string
 import string as rohit
 import time
 from datetime import datetime, timedelta
+from pytz import timezone
 from pyrogram import Client, filters, __version__
 from pyrogram.enums import ParseMode, ChatAction
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, ReplyKeyboardMarkup, ChatInviteLink, ChatPrivileges
@@ -23,6 +24,30 @@ from database.db_premium import *
 
 BAN_SUPPORT = f"{BAN_SUPPORT}"
 TUT_VID = f"{TUT_VID}"
+
+
+async def send_verification_log(client: Client, user, link_type="Verified Link Opened / Bypassed"):
+    """Sends a log message to the LOG_CHANNEL when a user opens a link or gets verified."""
+    if not LOG_CHANNEL:
+        return
+    
+    try:
+        username = f"@{user.username}" if user.username else "No Username"
+        ist = timezone("Asia/Kolkata")
+        current_time = datetime.now(ist).strftime("%Y-%m-%d %H:%M:%S")
+        
+        log_text = (
+            f"#USER_VERIFIED\n\n"
+            f"👤 **Name:** {user.first_name}\n"
+            f"🆔 **User ID:** `{user.id}`\n"
+            f"🔗 **Username:** {username}\n"
+            f"⏱️ **Timing:** `{current_time}`\n"
+            f"📌 **Action:** {link_type}"
+        )
+        
+        await client.send_message(LOG_CHANNEL, log_text)
+    except Exception as e:
+        print(f"Error sending verification log: {e}")
 
 
 async def short_url(client: Client, message: Message, base64_string):
@@ -58,9 +83,8 @@ async def short_url(client: Client, message: Message, base64_string):
             ]
         ]
 
-        # Send the shortlink photo message
+        # Send the shortlink photo message correctly (Fixed double reply_photo syntax error)
         snt_msg = await message.reply_photo(
-        await message.reply_photo(
             photo=SHORTENER_PIC,
             caption=SHORT_MSG,
             reply_markup=InlineKeyboardMarkup(buttons)
@@ -98,6 +122,9 @@ async def short_url(client: Client, message: Message, base64_string):
             )
         except Exception as e:
             print(f"Error updating shortlink notification: {e}")
+
+    except Exception as e:
+        print(f"Shortlink Error: {e}")
     
 
 
@@ -140,6 +167,8 @@ async def start_command(client: Client, message: Message):
             basic = text.split(" ", 1)[1]
             if basic.startswith("yu3elk"):
                 base64_string = basic[6:-1]
+                # Log when user bypasses / opens the verified link successfully
+                await send_verification_log(client, message.from_user, link_type="Verified Link Opened / Bypassed")
             else:
                 base64_string = basic
 
