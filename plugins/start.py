@@ -58,14 +58,47 @@ async def short_url(client: Client, message: Message, base64_string):
             ]
         ]
 
+        # Send the shortlink photo message
+        snt_msg = await message.reply_photo(
         await message.reply_photo(
             photo=SHORTENER_PIC,
             caption=SHORT_MSG,
             reply_markup=InlineKeyboardMarkup(buttons)
         )
 
-    except Exception as e:
-        print(f"Shortlink Error: {e}")
+        # 10-Minute Auto-Delete Timer (600 seconds)
+        AUTO_DELETE_TIME = 600
+
+        notification_msg = await message.reply(
+            f"<b>Tʜɪs Sʜᴏʀᴛʟɪɴᴋ ᴍᴇssᴀɢᴇ ᴡɪʟʟ ʙᴇ Dᴇʟᴇᴛᴇᴅ ɪɴ 10 ᴍɪɴᴜᴛᴇs. Pʟᴇᴀsᴇ ᴏᴘᴇɴ ʏᴏᴜʀ ʟɪɴᴋ ʙᴇғᴏʀᴇ ɪᴛ ɢᴇᴛs Dᴇʟᴇᴛᴇᴅ.</b>"
+        )
+
+        await asyncio.sleep(AUTO_DELETE_TIME)
+
+        # Delete the shortlink message
+        try:
+            await snt_msg.delete()
+        except Exception as e:
+            print(f"Error deleting shortlink message {snt_msg.id}: {e}")
+
+        # Update notification with reload button
+        try:
+            reload_url = (
+                f"https://t.me/{client.username}?start={message.command[1]}"
+                if message.command and len(message.command) > 1
+                else None
+            )
+            keyboard = InlineKeyboardMarkup(
+                [[InlineKeyboardButton("ɢᴇᴛ ʟɪɴᴋ ᴀɢᴀɪɴ!", url=reload_url)]]
+            ) if reload_url else None
+
+            await notification_msg.edit(
+                "<b>ʏᴏᴜʀ sʜᴏʀᴛʟɪɴᴋ ᴍᴇssᴀɢᴇ ɪꜱ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ᴅᴇʟᴇᴛᴇᴅ !!\n\nᴄʟɪᴄᴋ ʙᴇʟᴏᴡ ʙᴜᴛᴛᴏɴ ᴛᴏ ɢᴇᴛ ʏᴏᴜʀ ʟɪɴᴋ ᴀɢᴀɪɴ 👇</b>",
+                reply_markup=keyboard
+            )
+        except Exception as e:
+            print(f"Error updating shortlink notification: {e}")
+    
 
 
 @Bot.on_message(filters.command('start') & filters.private)
@@ -92,7 +125,7 @@ async def start_command(client: Client, message: Message):
             "<b>⛔️ You are Bᴀɴɴᴇᴅ from using this bot.</b>\n\n"
             "<i>Contact support if you think this is a mistake.</i>",
             reply_markup=InlineKeyboardMarkup(
-                [[InlineKeyboardButton("Contact Support", url=BAN_SUPPORT)]]
+                [[InlineKeyboardButton("ɪᴏɪɴ ᴍᴏᴠɪᴇ ᴄʜᴀɴɴᴇʟ ✨", url=f'https://t.me/+2dygCeQ4oGcwY2M9')]]
             )
         )
 
