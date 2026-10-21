@@ -42,17 +42,17 @@ async def short_url(client: Client, message: Message, base64_string):
         buttons = [
             [
                 InlineKeyboardButton(
-                    "ᴅᴏᴡɴʟᴏᴀᴅ",
+                    "🔺 ᴅᴏᴡɴʟᴏᴀᴅ 🔻",
                     url=website_link
                 ),
                 InlineKeyboardButton(
-                    "ᴛᴜᴛᴏʀɪᴀʟ",
+                    "✨ ᴛᴜᴛᴏʀɪᴀʟ 📚",
                     url=TUT_VID
                 )
             ],
             [
                 InlineKeyboardButton(
-                    "ᴘʀᴇᴍɪᴜᴍ",
+                    "💫 ᴘʀᴇᴍɪᴜᴍ ⭐",
                     callback_data="premium"
                 )
             ]
