@@ -29,6 +29,9 @@ TG_BOT_WORKERS = int(os.environ.get("TG_BOT_WORKERS", "200"))
 #--------------------------------------------
 START_PIC = os.environ.get("START_PIC", "https://iili.io/nXAwZ11.jpg")
 FORCE_PIC = os.environ.get("FORCE_PIC", "https://iili.io/nXA8TgI.jpg")
+# In config.py
+# Add or update this line:
+LOG_CHANNEL = int(os.environ.get("LOG_CHANNEL", "-1003772799863")) 
 
 #--------------------------------------------
 SHORTLINK_URL = os.environ.get("SHORTLINK_URL", "linkshortify.com")
